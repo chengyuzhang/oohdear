@@ -46,12 +46,27 @@ var reg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
 	var oLogin=$('.login-btn');
 
 	oLogin.on('click',function(){
+		var iSign=$('.sign').val();
 		var iTel=$('.tel').val();
 		var iCode=$('.code').val();
 		if(iTel==''||iCode==''){
 			alert('手机号或验证码不能为空！');
 		}else{
-			alert(212121);
+			$.ajax({
+				type:'post',
+				url:apiUrl+'/login',
+				data:{
+					mobile:iTel,
+					captcha:iCode,
+					captchaNo:iSign
+				},
+				success:function(data){
+					console.log(data);
+				},
+				error:function(err){
+					console.log(err);
+				}
+			});
 		}
 	});
 })();

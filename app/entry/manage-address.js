@@ -8,7 +8,7 @@ import apiUrl from '../js/config';
 (function(){
 	var oList=$('.list');
 	$.ajax({
-		url:apiUrl+'/address?memberNo=12312433',
+		url:apiUrl+'/address?memberNo=0000000992',
 		success: function(data){console.log(data);
 	    	var arr=data;
 	    	var str='';
@@ -26,7 +26,7 @@ import apiUrl from '../js/config';
                 
                 str+='<div class="delete"><i></i><span>删除</span></div>';
                 str+='<div class="edit" data-zone="'+item.zone+'" data-address="'+item.detail+'"><i></i><span>编辑</span></div>';
-                str+='</div></li>';
+                str+='</div><a href="order.html?vipId='+item.id+'"></a></li>';
 	    	});
 	    	oList.html(str);
 

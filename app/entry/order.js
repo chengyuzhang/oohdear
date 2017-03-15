@@ -10,13 +10,21 @@ import apiUrl from '../js/config';
 	var oGeter=$('.geter span');
 	var oTel=$('.geter em');
 	var oAddress=$('.detail-adress p');
+	var temp=window.location.search;
+	var valObject={};
+
+	if(temp){
+		valObject=url2json(temp.split('?')[1]);//如果才登录
+	}else{
+		valObject.vipId=0;//如果早前登录过
+	}
 
 	$.ajax({
 		type:'get',
-		url:apiUrl+'/address?memberNo='+sessionStorage.getItem('vipNo'),
-		success:function(data){
-			var data=data[0];
-console.log(data);
+		url:apiUrl+'/address/detail?memberNo='+sessionStorage.getItem('vipNo')+'&addressId='+valObject.vipId,
+		success:function(data){console.log(data);
+			var data=data.body.address;
+
 			oGeter.html('收货人：'+data.consignee);
 			oTel.html(data.mobile);
 			oAddress.html('详细地址：'+data.zone+data.detail);
@@ -48,3 +56,13 @@ console.log(data);
 		});
 	});
 })();
+
+function url2json(str){
+	var json={};
+	var arr=str.split('&');
+	for(var i=0; i<arr.length; i++){
+		var arr2=arr[i].split('=');
+		json[arr2[0]]=arr2[1];
+	}
+	return json;
+};
