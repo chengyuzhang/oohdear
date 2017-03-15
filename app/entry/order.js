@@ -5,6 +5,31 @@ import $ from 'n-zepto';
 //接口地址
 import apiUrl from '../js/config';
 
+//展示收货地址
+(function(){
+	var oGeter=$('.geter span');
+	var oTel=$('.geter em');
+	var oAddress=$('.detail-adress p');
+
+	$.ajax({
+		type:'get',
+		url:apiUrl+'/address?memberNo='+sessionStorage.getItem('vipNo'),
+		success:function(data){
+			var data=data[0];
+console.log(data);
+			oGeter.html('收货人：'+data.consignee);
+			oTel.html(data.mobile);
+			oAddress.html('详细地址：'+data.zone+data.detail);
+			if($(oAddress).height()<20){
+				$(oAddress).css('line-height','.3rem');
+			}
+		},
+		error:function(err){
+			console.log(err);
+		}
+	});
+})();
+
 //支付方式
 (function(){
 	var aLi=$('.pay-way li');

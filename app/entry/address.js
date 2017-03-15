@@ -66,6 +66,7 @@ var reg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
 			}
 
 			$.ajax({
+				type:'post',
 				url:apiUrl+'/register',
 				data:{
 					nickname:sOrder,
@@ -77,7 +78,9 @@ var reg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
 					detail:sDetialAddress
 				},
 				success:function(data){
-					console.log(data);
+					var vipNo=data.body.memberNo;
+					sessionStorage.setItem("vipNo", vipNo);
+					window.location.href='order.html';
 				},
 				error:function(err){
 					console.log(err);
