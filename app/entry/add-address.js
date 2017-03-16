@@ -125,14 +125,14 @@ import apiUrl from '../js/config';
 
 //保存地址
 (function(){
-	var reg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/; 
+	var reg = /^((1[0-9]{1})+\d{9})$/; 
 	var oBtn=$('.save');
 	oBtn.on('click',function(){
 		var name=$('.list li input').eq(0).val();
 		var tel=$('.list li input').eq(1).val();
 		var zone=$('.list li input').eq(2).val();
 		var address=$('.list li input').eq(3).val();
-
+		var vipNo=sessionStorage.getItem("vipNo");
 		console.log('name:',name,'tel:',tel,'zone:',zone,'address:',address);
 
 		if((name&&tel&&zone&&address)!=''){
@@ -150,7 +150,7 @@ import apiUrl from '../js/config';
 					defaultAddr:false,
 					zone:zone,
 					detail:address,
-					memberNo:12312433
+					memberNo:vipNo
 				},
 				success:function(data){
 					alert('添加成功！');

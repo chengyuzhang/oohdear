@@ -136,7 +136,7 @@ import apiUrl from '../js/config';
 
 //保存地址
 (function(){
-	var reg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/; 
+	var reg = /^((1[0-9]{1})+\d{9})$/; 
 	var oBtn=$('.save');
 	oBtn.on('click',function(){
 		var name=$('.list li input').eq(0).val();
@@ -146,10 +146,11 @@ import apiUrl from '../js/config';
 
 		if((name&&tel&&zone&&address)!=''){
 			//判断手机号
-			if(!reg.test(tel)){ 
-			    alert('请输入有效的手机号码'); 
-			    return false; 
+			if(!reg.test(tel)){
+			    alert('请输入有效的手机号码');
+			    return false;
 			}
+			var vipNo=sessionStorage.getItem("vipNo");
 			$.ajax({
 				type:'post',
 				url:apiUrl+'/address/edit',
@@ -159,7 +160,7 @@ import apiUrl from '../js/config';
 					defaultAddr:false,
 					zone:zone,
 					detail:address,
-					memberNo:"1231243",
+					memberNo:vipNo,
 					id:$('.list').get(0).dataset.id
 				},
 				success:function(data){

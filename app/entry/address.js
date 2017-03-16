@@ -4,7 +4,7 @@ import $ from 'n-zepto';
 //接口地址
 import apiUrl from '../js/config';
 
-var reg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
+var reg = /^((1[0-9]{1})+\d{9})$/;
 
 //获取验证码验证手机号
 (function(){

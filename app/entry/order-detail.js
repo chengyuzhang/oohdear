@@ -20,8 +20,10 @@ import apiUrl from '../js/config';
 	var expressCon=$('.express-step ul');
 	var str='';
 
+	var vipNo=sessionStorage.getItem("vipNo");
+
 	$.ajax({
-		url:apiUrl+'/customization/order/detail?memberNo=12451221&orderNo=345333',
+		url:apiUrl+'/customization/order/detail?memberNo='+vipNo+'&orderNo=345333',
 		success:function(data){console.log(data);
 			var order=data.body.order;
 			var address1=data.body.address;

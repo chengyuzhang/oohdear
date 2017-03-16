@@ -18,10 +18,12 @@ import apiUrl from '../js/config';
 	}else{
 		valObject.vipId=0;//如果早前登录过
 	}
+	
+	var vipNo=sessionStorage.getItem("vipNo");
 
 	$.ajax({
 		type:'get',
-		url:apiUrl+'/address/detail?memberNo='+sessionStorage.getItem('vipNo')+'&addressId='+valObject.vipId,
+		url:apiUrl+'/address/detail?memberNo='+vipNo+'&addressId='+valObject.vipId,
 		success:function(data){console.log(data);
 			var data=data.body.address;
 

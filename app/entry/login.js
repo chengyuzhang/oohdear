@@ -4,7 +4,7 @@ import $ from 'n-zepto';
 //接口地址
 import apiUrl from '../js/config';
 
-var reg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/; 
+var reg = /^((1[0-9]{1})+\d{9})$/; 
 //验证手机号获取验证码
 (function(){
 	var oBtn=$('.login>li>button');
@@ -62,6 +62,9 @@ var reg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
 				},
 				success:function(data){
 					console.log(data);
+					var vipNo=data.body.memberNo;
+					sessionStorage.setItem("vipNo",vipNo);
+					alert('注册成功！');
 				},
 				error:function(err){
 					console.log(err);

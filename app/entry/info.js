@@ -10,9 +10,10 @@ import apiUrl from '../js/config';
 	var oName=$('.list .nickname');
 	var oSex=$('.list .sex ');
 	var oTel=$('.list .tel ');
+	var vipNo=sessionStorage.getItem("vipNo");
 
 	$.ajax({
-		url:apiUrl+'/member?memberNo=12451221',
+		url:apiUrl+'/member?memberNo='+vipNo,
 		success:function(data){console.log(data);
 			$(oImg).attr('src',data.body.user.avatar);
 			$(oName).val(data.body.user.nickname);
@@ -35,12 +36,12 @@ import apiUrl from '../js/config';
 		var oSex=$('.sex').html();
 		var oImg=$('.list>li>input.upload').get(0).files[0];
 
-		
+		var vipNo=sessionStorage.getItem("vipNo");
+
 		oMyForm.append('test',oImg);
 		oMyForm.append('nickname',oName);
 		oMyForm.append('gender',oSex);
-		oMyForm.append('memberNo',12451221);
-
+		oMyForm.append('memberNo',vipNo);
 
 		$.ajax({
 			type:'post',
@@ -98,17 +99,3 @@ import apiUrl from '../js/config';
 		reader.readAsDataURL(file);
 	});
 })();
-
-
-/*
-
-
-
-这是一个自己项目所需，用于多页面结合webpack打包（执行js\css分离打包）的例子。 ####国际惯例: ######下载本示例后 npm install ####本示例有两个主要文件夹: ######1.app 用于存放打包前的项目所有文件，就是说这里的文件都是写项目时的全部文件 ######2.build 用于存放打包后的项目所有文件，就是说这里的文件是可以提交给后台上项目的文件
-
-####使用方法： ######1.npm start 用于项目在编写过程中的测试
-
-######2.npm run start:prod 用于打包项目文件
-
-
-*/

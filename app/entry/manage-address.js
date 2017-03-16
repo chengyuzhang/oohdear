@@ -7,10 +7,17 @@ import apiUrl from '../js/config';
 //访问展示接口
 (function(){
 	var oList=$('.list');
+	var vipNo=sessionStorage.getItem("vipNo");
 	$.ajax({
-		url:apiUrl+'/address?memberNo=0000000992',
-		success: function(data){console.log(data);
+		url:apiUrl+'/address?memberNo='+vipNo,
+		success: function(data){console.log('xx:',data);
 	    	var arr=data;
+
+	    	if(!arr.length){
+	    		$('.wrap').addClass('no');
+	    		$('.wrap').append('<p style="margin-top:3.5rem; color:#999; text-align:center;">暂无收货地址，快去添加吧~</p>');
+	    	}
+
 	    	var str='';
 	    	arr.forEach(function(item,index){
 	    		str+='<li id="'+item.id+'">';
@@ -43,7 +50,7 @@ import apiUrl from '../js/config';
 						var id=$(aItem).get(index).id;
 						
 						$.ajax({
-							url:apiUrl+'/address/default?memberNo=12312433&id='+id,
+							url:apiUrl+'/address/default?memberNo='+vipNo+'&id='+id,
 							success:function(data){
 								if(data){
 									aDefault.forEach(function(item1,index1){

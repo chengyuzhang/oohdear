@@ -18,6 +18,7 @@ import apiUrl from '../js/config';
 	});
 
 	load();
+	
 	//页面初始化
 	function init(arrSpec){
 		var oUl=$('.list');
