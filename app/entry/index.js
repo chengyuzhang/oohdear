@@ -22,7 +22,14 @@ import apiUrl from '../js/config';
 	$.ajax({
 		url:apiUrl+'/article/list?pageNum='+pageNum+'&pageSize='+pageSize+'',
 		success:function(data){
+			if(data.head.code){
+				console.log('数据返回错误！');
+				return;
+			}
 			init(data.body.articles,data.body.subjectList);
+		},
+		error:function(err){
+			console.log(err);
 		}
 	});
 	load();
@@ -34,7 +41,7 @@ import apiUrl from '../js/config';
 			if(index<3){
 				str+='<li class="item"><section class="block">';
 				str+='<div class="item-head"><img class="avater" src="'+item.avatar+'" ><span class="name">'+item.nickName+'</span><i class="time">'+item.publishTime+'</i></div>';
-				str+='<img class="show-pic" src="'+item.cover+'" >';
+				str+='<a href="detail.html?id='+item.id+'"><img class="show-pic" src="'+item.cover+'" ></a>';
 				str+='<h2 class="title">'+item.title+'</h2>';
 				str+='<p class="text">'+item.content+'</p>';
 				str+='<div class="item-foot"><span class="words">留言 '+item.messageNum+'</span><i></i><span class="good">点赞 '+item.interestedNum+'</span>';
@@ -66,7 +73,7 @@ import apiUrl from '../js/config';
 			if(index>=3){
 				str+='<li class="item"><section class="block">';
 				str+='<div class="item-head"><img class="avater" src="'+item.avatar+'" ><span class="name">'+item.nickName+'</span><i class="time">'+item.publishTime+'</i></div>';
-				str+='<img class="show-pic" src="'+item.cover+'" >';
+				str+='<a href="detail.html?id='+item.id+'"><img class="show-pic" src="'+item.cover+'" ></a>';
 				str+='<h2 class="title">'+item.title+'</h2>';
 				str+='<p class="text">'+item.content+'</p>';
 				str+='<div class="item-foot"><span class="words">留言 '+item.messageNum+'</span><i></i><span class="good">点赞 '+item.interestedNum+'</span>';
@@ -89,7 +96,7 @@ import apiUrl from '../js/config';
 		arrShow.forEach(function(item,index){
 			str+='<li class="item"><section class="block">';
 			str+='<div class="item-head"><img class="avater" src="'+item.avatar+'" ><span class="name">'+item.nickName+'</span><i class="time">'+item.publishTime+'</i></div>';
-			str+='<img class="show-pic" src="'+item.cover+'" >';
+			str+='<a href="detail.html?id='+item.id+'"><img class="show-pic" src="'+item.cover+'" ></a>';
 			str+='<h2 class="title">'+item.title+'</h2>';
 			str+='<p class="text">'+item.content+'</p>';
 			str+='<div class="item-foot"><span class="words">留言 '+item.messageNum+'</span><i></i><span class="good">点赞 '+item.interestedNum+'</span>';
@@ -202,6 +209,7 @@ import apiUrl from '../js/config';
 		var iHScreen=window.screen.availHeight;//获取屏幕高度
 
 		var iNum=0;//记录第一次到最后一条数据时的页数
+		var iBtnNum=0;
 		var timer=null;
 		var timer1=null;
 		var timer2=null;
@@ -231,6 +239,10 @@ import apiUrl from '../js/config';
 					$.ajax({
 						url:apiUrl+'/article/list?pageNum='+pageNum+'&pageSize='+pageSize+'',
 						success:function(data){
+							if(data.head.code){
+								console.log('数据返回错误！');
+								return;
+							}
 							if(!data.body.end){
 								refresh(data.body.articles);
 								$(oRe).html('本次加载完成！');
@@ -239,6 +251,10 @@ import apiUrl from '../js/config';
 								},2000);
 
 							}else{
+								if(!iBtnNum){
+									refresh(data.body.articles);console.log(111);
+								}
+								iBtnNum++;
 								iNum=pageNum-1;
 								pageNum=iNum;
 								$(oRe).html('已经到末尾咯~');

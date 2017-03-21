@@ -14,7 +14,10 @@ import apiUrl from '../js/config';
 	$.ajax({
 		url:apiUrl+'/customization/orders?memberNo='+vipNo,
 		success:function(data){
-		
+			if(data.head.code){
+				console.log('数据返回错误！');
+				return;
+			}
 			if(!data.body.orders.length){
 	    		$('.wrap').addClass('no');
 	    		$('.wrap').append('<p style="margin-top:3.5rem; color:#999; text-align:center;">您还没有订单，快去订制吧~</p><a style="display:block; width:.89rem; margin-left:1.43rem; margin-top:.4rem; border: 1px solid #CB68A4; color:#CB68A4; text-align:center; line-height:.3rem; border-radius:5px; font-size:.14rem;" href=custom.html>我要定制</a>');

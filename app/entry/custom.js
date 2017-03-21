@@ -5,16 +5,124 @@ import $ from 'n-zepto';
 //接口地址
 import apiUrl from '../js/config';
 
-$.ajax({
-	url:apiUrl+'/customization/price?itemCode=AaB',
-	success:function(data){
-		console.log(data);
-	},
-	error:function(err){
-		console.log(err);
-	}
-});
+//价格
+(function(){
+	var oNeck=$('.necklace');
+	var oBrooch=$('.brooch');
+	var oEarring=$('.earring');
+	var oSilver=$('.silver');
+	var oGold=$('.gold');
+	var oTwo=$('.two');
+	var oThree=$('.three');
+	var oSix=$('.six');
+	var sStyle='';
+	var sMaterial='';
+	var sSize='';
+	var aImg1=$('.style>div>img');
+	var aImg2=$('.kind>div>img');
+	var aImg3=$('.size>div>img');
 
+	var oMoney=$('.price>span');
+	//选择款式
+	oBrooch.on('click',function(){
+		sStyle=$(this).get(0).dataset.model;
+		sessionStorage.setItem("style",sStyle);
+		changeStyle(aImg1);
+		$(this).find('img').attr('src',require('../imgs/brooch-copy.png'));
+		$.ajax({
+			url:apiUrl+'/customization/price?style='+sStyle+'&material='+sessionStorage.getItem("material")+'&size='+sessionStorage.getItem("size"),
+			success:function(data){
+				if(data.head.code){
+					console.log('数据返回错误！');
+					return;
+				}
+				$(oMoney).html(data.body.money);
+			},
+			error:function(err){
+				console.log(err);
+			}
+		});
+	});
+	//选择材质
+	oSilver.on('click',function(){
+		sMaterial=$(this).get(0).dataset.model;
+		sessionStorage.setItem("material",sMaterial);
+		changeMaterial(aImg2);
+		$(this).find('img').attr('src',require('../imgs/block-copy.png'));
+		$.ajax({
+			url:apiUrl+'/customization/price?style='+sessionStorage.getItem("style")+'&material='+sMaterial+'&size='+sessionStorage.getItem("size"),
+
+			success:function(data){
+				if(data.head.code){
+					console.log('数据返回错误！');
+					return;
+				}
+				$(oMoney).html(data.body.money);
+			},
+			error:function(err){
+				console.log(err);
+			}
+		});
+	});
+	//选择尺寸
+	oTwo.on('click',function(){
+		sSize=$(this).get(0).dataset.model;
+		sessionStorage.setItem("size",sSize);
+		changeSize(aImg3);
+		$(this).find('img').attr('src',require('../imgs/s-copy.png'));
+		$.ajax({
+			url:apiUrl+'/customization/price?style='+sessionStorage.getItem("style")+'&material='+sessionStorage.getItem("material")+'&size='+sSize,
+			success:function(data){
+				if(data.head.code){
+					console.log('数据返回错误！');
+					return;
+				}
+				$(oMoney).html(data.body.money);
+			},
+			error:function(err){
+				console.log(err);
+			}
+		});
+	});
+	oThree.on('click',function(){
+		sSize=$(this).get(0).dataset.model;
+		sessionStorage.setItem("size",sSize);
+		changeSize(aImg3);
+		$(this).find('img').attr('src',require('../imgs/m-copy.png'));
+		$.ajax({
+			url:apiUrl+'/customization/price?style='+sessionStorage.getItem("style")+'&material='+sessionStorage.getItem("material")+'&size='+sSize,
+			success:function(data){
+				if(data.head.code){
+					console.log('数据返回错误！');
+					return;
+				}
+				$(oMoney).html(data.body.money);
+			},
+			error:function(err){
+				console.log(err);
+			}
+		});
+	});
+	oSix.on('click',function(){
+		sSize=$(this).get(0).dataset.model;
+		sessionStorage.setItem("size",sSize);
+		changeSize(aImg3);
+		$(this).find('img').attr('src',require('../imgs/l-copy.png'));
+		$.ajax({
+			url:apiUrl+'/customization/price?style='+sessionStorage.getItem("style")+'&material='+sessionStorage.getItem("material")+'&size='+sSize,
+			success:function(data){
+				if(data.head.code){
+					console.log('数据返回错误！');
+					return;
+				}
+				$(oMoney).html(data.body.money);
+			},
+			error:function(err){
+				console.log(err);
+			}
+		});
+	});
+})();
 
 //弹出选择层
 (function(){
@@ -52,9 +160,42 @@ $.ajax({
 
 //选择详细属性弹层
 (function(){
-	var aData1=['链长40cm','链长50cm'];
-	var aData2=['耳钉','耳环'];
-	var aData3=['白色','黄色','玫瑰色'];
+	var aData1=[
+		{
+			l:'链长40cm',
+			code:'KS-XL-01'
+		},
+		{
+			l:'链长50cm',
+			code:'KS-XL-02'
+		}
+	];
+
+	var aData2=[
+		{
+			style:'耳钉',
+			code:'KS-ES-01'
+		},
+		{
+			style:'耳环',
+			code:'KS-ES-02'
+		}
+	];
+
+	var aData3=[
+		{
+			color:'白色',
+			code:'CZ-18KJ-01'
+		},
+		{
+			color:'黄色',
+			code:'CZ-18KJ-02'
+		},
+		{
+			color:'玫瑰色',
+			code:'CZ-18KJ-03'
+		}
+	];
 
 	var oBtn1=$('.necklace');
 	var oBtn2=$('.earring');
@@ -88,19 +229,19 @@ $.ajax({
 			switch($(this).attr('data-type')){
 				case 'necklace':
 					aData1.forEach(function(item,index){
-						str+='<li>'+item+'</li>';
+						str+='<li data-code="'+item.code+'">'+item.l+'</li>';
 					});
 					oH2.html('请选择项链长度');
 				break;
 				case 'earring':
 					aData2.forEach(function(item,index){
-						str+='<li>'+item+'</li>';
+						str+='<li data-code="'+item.code+'">'+item.style+'</li>';
 					});
 					oH2.html('请选择项耳饰款式');
 				break;
 				case 'block':
 					aData3.forEach(function(item,index){
-						str+='<li>'+item+'</li>';
+						str+='<li data-code="'+item.code+'">'+item.color+'</li>';
 					});
 					oH2.html('请选择项18k金颜色');
 				break;
@@ -123,24 +264,104 @@ $.ajax({
 
 		//选择样式赋值并且弹层消失
 		function selectItem(){
+			var aImg1=$('.style>div>img');
+			var aImg2=$('.kind>div>img');
 			var aLi=$('.opacity-con>ul>li');
 			var oText=$(btn).find('p');
+			var oMoney=$('.price>span');
 			aLi.forEach(function(item,index){
 				$(item).on('click',function(){
 					var val=$(this).html();
 					switch($(btn).attr('data-type')){
 						case 'necklace':
 							oText.html('项链('+val+')');
+							sessionStorage.setItem("style",$(item).get(0).dataset.code);
+							changeStyle(aImg1);
+							$(aImg1).eq(0).attr('src',require('../imgs/necklace-copy.png'));
+							$.ajax({
+								url:apiUrl+'/customization/price?style='+$(item).get(0).dataset.code+'&material='+sessionStorage.getItem("material")+'&size='+sessionStorage.getItem("size"),
+								success:function(data){
+									if(data.head.code){
+										console.log('数据返回错误！');
+										return;
+									}
+									$(oMoney).html(data.body.money);
+								},
+								error:function(err){
+									console.log(err);
+								}
+							});
 						break;
 						case 'earring':
 							oText.html(val);
+							sessionStorage.setItem("style",$(item).get(0).dataset.code);
+							changeStyle(aImg1);
+							$(aImg1).eq(2).attr('src',require('../imgs/earring-copy.png'));
+							$.ajax({
+								url:apiUrl+'/customization/price?style='+$(item).get(0).dataset.code+'&material='+sessionStorage.getItem("material")+'&size='+sessionStorage.getItem("size"),
+								success:function(data){
+									if(data.head.code){
+										console.log('数据返回错误！');
+										return;
+									}
+									$(oMoney).html(data.body.money);
+								},
+								error:function(err){
+									console.log(err);
+								}
+							});
 						break;
 						case 'block':
 							oText.html('18k金('+val+')');
+							sessionStorage.setItem("material",$(item).get(0).dataset.code);
+							changeMaterial(aImg2);
+							$(aImg2).eq(1).attr('src',require('../imgs/block-copy.png'));
+							$.ajax({
+								url:apiUrl+'/customization/price?style='+sessionStorage.getItem("style")+'&material='+$(item).get(0).dataset.code+'&size='+sessionStorage.getItem("size"),
+								success:function(data){
+									if(data.head.code){
+										console.log('数据返回错误！');
+										return;
+									}
+									$(oMoney).html(data.body.money);
+								},
+								error:function(err){
+									console.log(err);
+								}
+							});
 						break;
 					}
 				});
 			});
 		}
 	}
+})();
+
+function changeStyle(aObj){
+	aObj[0].src=require('../imgs/necklace.png');
+	aObj[1].src=require('../imgs/brooch.png');
+	aObj[2].src=require('../imgs/earring.png');
+}
+function changeMaterial(aObj){
+	aObj[0].src=require('../imgs/block.png');
+	aObj[1].src=require('../imgs/block.png');
+}
+function changeSize(aObj){
+	aObj[0].src=require('../imgs/s.png');
+	aObj[1].src=require('../imgs/m.png');
+	aObj[2].src=require('../imgs/l.png');
+}
+
+//提交定制
+(function(){
+	var oBtn=$('.price>button');
+
+	oBtn.on('click',function(){
+		var vipNo=sessionStorage.getItem("vipNo");
+		if(vipNo){
+			window.location.href='order.html';
+		}else{
+			window.location.href='address.html';
+		}
+	});
 })();

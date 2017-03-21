@@ -8,13 +8,9 @@ import apiUrl from '../js/config';
 (function(){
 	var iBtn=true;//控制刚登录时头像显示开关
 	var vipNo=sessionStorage.getItem("vipNo");
-
-	console.log('no:',vipNo);
-
 	if(vipNo){
 		show(vipNo,iBtn);
 	}
-	
 })();
 
 //点击注册
@@ -24,7 +20,6 @@ import apiUrl from '../js/config';
 	oBtn.on('click',function(){
 		var vipNo=sessionStorage.getItem("vipNo");
 		if(vipNo){return;}
-		
 		oP.css('display','block');
 		setTimeout(function(){
 			oP.css('opacity',1);
@@ -95,6 +90,10 @@ var reg = /^((1[0-9]{1})+\d{9})$/;
 				},
 				success:function(data){
 					console.log('data:',data);
+					if(data.head.code){
+						console.log('数据返回错误！');
+						return;
+					}
 					var vipNo=data.body.memberNo;
 					sessionStorage.setItem("vipNo",vipNo);
 					show(vipNo);
@@ -121,6 +120,10 @@ function show(vipNo,iBtn){
 	$.ajax({
 		url:apiUrl+'/member/center?memberNo='+vipNo,
 		success:function(data){console.log('show:',data);
+			if(data.head.code){
+				console.log('数据返回错误！');
+				return;
+			}
 			if(iBtn){
 				$(oImg).attr('src',data.body.avatar);
 			}

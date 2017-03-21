@@ -14,7 +14,11 @@ import apiUrl from '../js/config';
 
 	$.ajax({
 		url:apiUrl+'/member?memberNo='+vipNo,
-		success:function(data){console.log(data);
+		success:function(data){
+			if(data.head.code){
+				console.log('数据返回错误！');
+				return;
+			}
 			$(oImg).attr('src',data.body.user.avatar);
 			$(oName).val(data.body.user.nickname);
 			$(oSex).html(data.body.user.gender);

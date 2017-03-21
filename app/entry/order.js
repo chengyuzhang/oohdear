@@ -24,7 +24,11 @@ import apiUrl from '../js/config';
 	$.ajax({
 		type:'get',
 		url:apiUrl+'/address/detail?memberNo='+vipNo+'&addressId='+valObject.vipId,
-		success:function(data){console.log(data);
+		success:function(data){
+			if(data.head.code){
+				console.log('数据返回错误！');
+				return;
+			}
 			var data=data.body.address;
 
 			oGeter.html('收货人：'+data.consignee);
@@ -59,6 +63,33 @@ import apiUrl from '../js/config';
 	});
 })();
 
+//结算
+(function(){
+	var oBtn=$('.pay>button');
+
+	oBtn.on('click',function(){
+		$.ajax({
+			type:'post',
+			url:'http://192.168.30.77:8081/customization/order/pay',
+			data:{
+				orderNo:'1234567'
+			},
+			success:function(data){
+				if(data.head.code){
+					console.log('数据返回错误！');
+					return;
+				}
+				var form=data.body.form;
+				$('body').append(form);
+				console.log('data:',data);
+			},
+			error:function(err){
+				console.log(err);
+			}
+		});
+	});
+
+})();
 function url2json(str){
 	var json={};
 	var arr=str.split('&');

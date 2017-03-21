@@ -10,7 +10,8 @@ import apiUrl from '../js/config';
 	var vipNo=sessionStorage.getItem("vipNo");
 	$.ajax({
 		url:apiUrl+'/address?memberNo='+vipNo,
-		success: function(data){console.log('xx:',data);
+		success: function(data){
+			
 	    	var arr=data;
 
 	    	if(!arr.length){
@@ -51,7 +52,7 @@ import apiUrl from '../js/config';
 						
 						$.ajax({
 							url:apiUrl+'/address/default?memberNo='+vipNo+'&id='+id,
-							success:function(data){
+							success:function(data){console.log(data);
 								if(data){
 									aDefault.forEach(function(item1,index1){
 										$(item1).find('i').removeClass('active');
