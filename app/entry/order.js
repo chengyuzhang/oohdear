@@ -70,7 +70,7 @@ import apiUrl from '../js/config';
 	oBtn.on('click',function(){
 		$.ajax({
 			type:'post',
-			url:'http://192.168.30.77:8081/customization/order/pay',
+			url:'http://192.168.30.45:8081/customization/order/pay',
 			data:{
 				orderNo:'1234567'
 			},

@@ -3,6 +3,7 @@ import '../css/login.css';
 import $ from 'n-zepto';
 //接口地址
 import apiUrl from '../js/config';
+var ID=localStorage.getItem("deciveID");
 
 var reg = /^((1[0-9]{1})+\d{9})$/; 
 //验证手机号获取验证码
@@ -58,7 +59,8 @@ var reg = /^((1[0-9]{1})+\d{9})$/;
 				data:{
 					mobile:iTel,
 					captcha:iCode,
-					captchaNo:iSign
+					captchaNo:iSign,
+					random:ID
 				},
 				success:function(data){
 					console.log(data);

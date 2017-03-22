@@ -55,7 +55,7 @@ import apiUrl from '../js/config';
 	var oUl=$('.history ul');
 	var vipNo=sessionStorage.getItem("vipNo");
 	
-	if(vipNo){//登录
+	if(parseInt(vipNo)){//登录
 		//添加搜索记录
 
 		$(document).on('keydown',function(ev){

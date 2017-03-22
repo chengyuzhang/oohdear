@@ -358,7 +358,7 @@ function changeSize(aObj){
 
 	oBtn.on('click',function(){
 		var vipNo=sessionStorage.getItem("vipNo");
-		if(vipNo){
+		if(parseInt(vipNo)){
 			window.location.href='order.html';
 		}else{
 			window.location.href='address.html';

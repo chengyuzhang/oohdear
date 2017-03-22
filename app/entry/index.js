@@ -1,9 +1,40 @@
 import '../css/index.css';
 import $ from 'n-zepto';
 import apiUrl from '../js/config';
+import md5 from 'md5';
 
-//接口地址
-//var apiUrl='http://192.168.30.45:8081';
+//页面首次打开的唯一标识
+(function(){
+	var ID=localStorage.getItem("deciveID");
+	var rnd=rand(rand(1,100),rand(1,10000));
+
+	if(!ID){
+		var timestamp=Date.now()+new Date(rnd);
+		var md5_timestamp=md5(timestamp);
+		localStorage.setItem("deciveID",md5_timestamp);
+		$.ajax({
+			url:apiUrl+'/random?random='+md5_timestamp,
+			success:function(data){
+				console.log('标识传递状态：',data);
+			},
+			error:function(err){
+				console.log(err);
+			}
+		});
+	}else{
+		$.ajax({
+			url:apiUrl+'/random?random='+ID,
+			success:function(data){
+				console.log('标识传递状态：',data);
+			},
+			error:function(err){
+				console.log(err);
+			}
+		});
+	}
+
+	console.log('ID:',ID);
+})();
 
 //跳转到搜索页面
 (function(){
@@ -56,7 +87,7 @@ import apiUrl from '../js/config';
 		
 		//商品展示中间的专题
 		str+='<li class="spec">';
-		str+='<div class="spec-top"><h2>ooh Dear专题</h2></div>';
+		str+='<div class="spec-top"><h2>ooh Dear专题</h2><a href="topic.html">查看全部<span></span></a></div>';
 		str+='<div id="swiper-container3" class="spec-con"><div class="swiper-wrapper">';
 
 		arrSpec.forEach(function(item,index){
@@ -249,7 +280,7 @@ import apiUrl from '../js/config';
 								timer2=setTimeout(function(){
 									$(oRe).css('bottom','-1rem');
 								},2000);
-
+								iBtnNum=0;
 							}else{
 								if(!iBtnNum){
 									refresh(data.body.articles);console.log(111);
@@ -272,3 +303,7 @@ import apiUrl from '../js/config';
 		});
 	}
 })();
+
+function rand(m,n){
+	return parseInt(Math.random()*(n-m)+m);
+}

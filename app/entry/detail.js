@@ -6,9 +6,40 @@ import $ from 'n-zepto';
 import apiUrl from '../js/config';
 
 var vipNo=sessionStorage.getItem("vipNo");
+var ID=localStorage.getItem("deciveID");
 
 var temp=window.location.search;
 var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
+
+//
+(function(){
+	var oPic=$('.detail>img');
+	var oWrap=$('.detail-con');
+	var oT=$('.detail-title');
+	var oImg=$('.item-head>img.avater');
+	var oName=$('.item-head>.name');
+	var oTime=$('.item-head>i.time');
+	var oSign=$('em.kind');
+
+	$.ajax({
+		url:'http://192.168.30.234:8082/article/58',
+		success:function(data){
+			console.log(data);
+			var con=data.body.content;
+			$(oPic).attr('src',con.picture);
+			$(oImg).attr('src',con.avatar);
+			$(oName).html(con.nickName);
+			$(oT).html(con.articleName);
+			$(oTime).html(con.created);
+			$(oSign).html(con.articleLabel);
+			$(oWrap).html(con.articleInfo);
+		},
+		error:function(err){
+			console.log(err);
+		}
+	});
+})();
+
 //留言列表
 (function(){
 	var oWrap=$('.list');
@@ -27,7 +58,7 @@ var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
 		url:apiUrl+'/message/query?memberNo='+vipNo+'&articleId='+valObject.id+'&pageNum='+pageNum+'&pageSize='+pageSize,
 		success:function(data){
 			var arr=data.body.messageList;
-			
+			if(!arr){return;}
 			arr.forEach(function(item,index){
 				str+='<li id='+item.id+'><div class="top">';
                 str+='<img src="'+item.avatar+'" alt=""><span>'+item.nickname+'</span><i>'+item.createTime+'</i>';
@@ -53,8 +84,8 @@ var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
 			$.ajax({
 				url:apiUrl+'/message/query?memberNo='+vipNo+'&articleId='+valObject.id+'&pageNum='+pageNum+'&pageSize='+pageSize,
 				success:function(data){
-
 					arr=data.body.messageList;
+					if(!arr){return;}
 					if(!data.body.end){
 						arr.forEach(function(item,index){
 							str+='<li id='+item.id+'><div class="top">';
@@ -67,8 +98,8 @@ var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
 						timer2=setTimeout(function(){
 							$(oRe).css('bottom','.1rem');
 						},2000);
+						iBtnNum=0;
 					}else{
-
 						if(!iBtnNum){
 							arr.forEach(function(item,index){
 								str+='<li id='+item.id+'><div class="top">';
@@ -117,7 +148,7 @@ var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
 			if(!body.isRecord){
 				$(oCollect).css('background','url('+require('../imgs/heart.png')+') 0 0/contain no-repeat');
 			}else{
-				$(oCollect).css('background','url('+require('../imgs/space.png')+') 0 0/contain no-repeat');
+				$(oCollect).css('background','url('+require('../imgs/heart-copy.png')+') 0 0/contain no-repeat');
 			}
 		},
 		error:function(err){
@@ -135,7 +166,8 @@ var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
 	var oBg=$('.words-box-bg');
 
 	oCollect.on('click',function(){
-		if(vipNo){
+		var vipNo=sessionStorage.getItem("vipNo");
+		if(parseInt(vipNo)){
 			$.ajax({
 				url:apiUrl+'/collection/add?memberNo='+vipNo+'&articleId='+30,
 				success:function(data){
@@ -143,7 +175,7 @@ var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
 					if(!body.isRecord){
 						$(oCollect).css('background','url('+require('../imgs/heart.png')+') 0 0/contain no-repeat');
 					}else{
-						$(oCollect).css('background','url('+require('../imgs/space.png')+') 0 0/contain no-repeat');
+						$(oCollect).css('background','url('+require('../imgs/heart-copy.png')+') 0 0/contain no-repeat');
 					}
 				},
 				error:function(err){
@@ -156,12 +188,17 @@ var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
 	});
 
 	oWord.on('click',function(){
-		$(oBg).css('display','block');
+		var vipNo=sessionStorage.getItem("vipNo");
+		if(parseInt(vipNo)){
+			$(oBg).css('display','block');
 
-		setTimeout(function(){
-			$(oBg).css('opacity',1);
-			$(oBg).find('textarea').get(0).focus();
-		},50);
+			setTimeout(function(){
+				$(oBg).css('opacity',1);
+				$(oBg).find('textarea').get(0).focus();
+			},50);
+		}else{
+			login();
+		}
 	});
 
 	oCancel.on('click',function(){
@@ -171,18 +208,54 @@ var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
 			$(oBg).find('textarea').get(0).blur();
 		},500);
 	});
+
+	oOk.on('click',function(){
+		var val=$(oBg).find('textarea').val();
+		var vipNo=sessionStorage.getItem("vipNo");
+		console.log('xxx:',vipNo);
+		$.ajax({
+			type:'post',
+			url:apiUrl+'/message/add',
+			data:{
+				memberNo:vipNo,
+				articleId:valObject.id,
+				content:val
+			},
+			success:function(data){
+				console.log(data);
+				if(data.head.code){
+					console.log('数据返回错误！');
+					return;
+				}
+				if(data.body.addStatus){
+					$(oBg).css('opacity',0);
+					setTimeout(function(){
+						$(oBg).css('display','none');
+						$(oBg).find('textarea').get(0).blur();
+					},500);
+				}
+			},
+			error:function(err){
+				console.log(err);
+			}
+		});
+	});
 })();
 
 function login(){
 	//点击注册
 	var oP=$('.opacity');
-	var vipNo=sessionStorage.getItem("vipNo");
-	if(vipNo){return;}
+	var oImg=$('.login>li>img');
+
+	$(oImg).on('click',function(){
+		$(this).get(0).src=apiUrl+'/pic?t='+Date.now()+'&random='+ID;
+	});
+
 	oP.css('display','block');
 	setTimeout(function(){
 		oP.css('opacity',1);
+		$(oImg).get(0).src=apiUrl+'/pic?t='+Date.now()+'&random='+ID;
 	},50);
-
 	var reg = /^((1[0-9]{1})+\d{9})$/; 
 	//验证手机号获取验证码
 	(function(){
@@ -241,10 +314,16 @@ function login(){
 					data:{
 						mobile:iTel,
 						captcha:iCode,
-						captchaNo:iSign
+						captchaNo:iSign,
+						random:ID
 					},
 					success:function(data){
 						console.log('data:',data);
+						if(data.head.code){
+							alert(data.head.message);
+							$(oImg).get(0).src=apiUrl+'/pic?t='+Date.now()+'&random='+ID;
+							return;
+						}
 						var vipNo=data.body.memberNo;
 						sessionStorage.setItem("vipNo",vipNo);
 						alert('注册成功！');

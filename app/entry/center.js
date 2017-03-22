@@ -4,29 +4,74 @@ import $ from 'n-zepto';
 
 //接口地址
 import apiUrl from '../js/config';
+var ID=localStorage.getItem("deciveID");
 //个人中心展示
 (function(){
 	var iBtn=true;//控制刚登录时头像显示开关
 	var vipNo=sessionStorage.getItem("vipNo");
-	if(vipNo){
+	if(parseInt(vipNo)){
 		show(vipNo,iBtn);
 	}
 })();
 
-//点击注册
+//判断是否登录点击注册
 (function(){
-	var oBtn=$('.detail');
+	var oBtn=$('.detail');//头像
+	var oBtn2=$('.custom a');//我的定制栏
+	var oBtn3=$('.info a');//个人信息栏
+	var oBtn4=$('.address a');//收货地址栏
 	var oP=$('.opacity');
+	var oImg=$('.login>li>img');
+
+	$(oImg).on('click',function(){
+		$(this).get(0).src=apiUrl+'/pic?t='+Date.now()+'&random='+ID;
+	});
+
 	oBtn.on('click',function(){
 		var vipNo=sessionStorage.getItem("vipNo");
-		if(vipNo){return;}
+		if(parseInt(vipNo)){return;}
 		oP.css('display','block');
 		setTimeout(function(){
 			oP.css('opacity',1);
+			$(oImg).get(0).src=apiUrl+'/pic?t='+Date.now()+'&random='+ID;
 		},50);
 	});
-})();
 
+	oBtn2.on('click',function(){
+		var vipNo=sessionStorage.getItem("vipNo");
+		if(!parseInt(vipNo)){
+			oP.css('display','block');
+			setTimeout(function(){
+				oP.css('opacity',1);
+				$(oImg).get(0).src=apiUrl+'/pic?t='+Date.now()+'&random='+ID;
+			},50);
+			return false;
+		}
+	});
+
+	oBtn3.on('click',function(){
+		var vipNo=sessionStorage.getItem("vipNo");
+		if(!parseInt(vipNo)){
+			oP.css('display','block');
+			setTimeout(function(){
+				oP.css('opacity',1);
+				$(oImg).get(0).src=apiUrl+'/pic?t='+Date.now()+'&random='+ID;
+			},50);
+			return false;
+		}
+	});
+	oBtn4.on('click',function(){
+		var vipNo=sessionStorage.getItem("vipNo");
+		if(!parseInt(vipNo)){
+			oP.css('display','block');
+			setTimeout(function(){
+				oP.css('opacity',1);
+				$(oImg).get(0).src=apiUrl+'/pic?t='+Date.now()+'&random='+ID;
+			},50);
+			return false;
+		}
+	});
+})();
 
 var reg = /^((1[0-9]{1})+\d{9})$/; 
 //验证手机号获取验证码
@@ -68,7 +113,7 @@ var reg = /^((1[0-9]{1})+\d{9})$/;
 //登录
 (function(){
 	var oLogin=$('.login-btn');
-
+	var oImg=$('.login>li>img');
 	oLogin.on('click',function(){
 		var iSign=$('.sign').val();
 		var iTel=$('.tel').val();
@@ -86,12 +131,14 @@ var reg = /^((1[0-9]{1})+\d{9})$/;
 				data:{
 					mobile:iTel,
 					captcha:iCode,
-					captchaNo:iSign
+					captchaNo:iSign,
+					random:ID
 				},
 				success:function(data){
 					console.log('data:',data);
 					if(data.head.code){
-						console.log('数据返回错误！');
+						alert(data.head.message);
+						$(oImg).get(0).src=apiUrl+'/pic?t='+Date.now()+'&random='+ID;
 						return;
 					}
 					var vipNo=data.body.memberNo;
@@ -103,7 +150,6 @@ var reg = /^((1[0-9]{1})+\d{9})$/;
 					setTimeout(function(){
 						oP.css('display','none');
 					},510);
-
 				},
 				error:function(err){
 					console.log(err);
