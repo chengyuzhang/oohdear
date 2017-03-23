@@ -21,6 +21,7 @@ var ID=localStorage.getItem("deciveID");
 	var oBtn3=$('.info a');//个人信息栏
 	var oBtn4=$('.address a');//收货地址栏
 	var oP=$('.opacity');
+	var oX=$('.opacity>header a');
 	var oImg=$('.login>li>img');
 
 	$(oImg).on('click',function(){
@@ -60,6 +61,7 @@ var ID=localStorage.getItem("deciveID");
 			return false;
 		}
 	});
+	
 	oBtn4.on('click',function(){
 		var vipNo=sessionStorage.getItem("vipNo");
 		if(!parseInt(vipNo)){
@@ -70,6 +72,14 @@ var ID=localStorage.getItem("deciveID");
 			},50);
 			return false;
 		}
+	});
+	//关闭注册层
+	oX.on('click',function(){
+		oP.css('opacity',0);
+		setTimeout(function(){
+			oP.css('display','none');
+		},500);
+		return false;
 	});
 })();
 

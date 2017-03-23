@@ -29,6 +29,7 @@ import apiUrl from '../js/config';
 		sessionStorage.setItem("style",sStyle);
 		changeStyle(aImg1);
 		$(this).find('img').attr('src',require('../imgs/brooch-copy.png'));
+		$(this).find('p').addClass('active');
 		$.ajax({
 			url:apiUrl+'/customization/price?style='+sStyle+'&material='+sessionStorage.getItem("material")+'&size='+sessionStorage.getItem("size"),
 			success:function(data){
@@ -49,6 +50,7 @@ import apiUrl from '../js/config';
 		sessionStorage.setItem("material",sMaterial);
 		changeMaterial(aImg2);
 		$(this).find('img').attr('src',require('../imgs/block-copy.png'));
+		$(this).find('p').addClass('active');
 		$.ajax({
 			url:apiUrl+'/customization/price?style='+sessionStorage.getItem("style")+'&material='+sMaterial+'&size='+sessionStorage.getItem("size"),
 
@@ -70,6 +72,7 @@ import apiUrl from '../js/config';
 		sessionStorage.setItem("size",sSize);
 		changeSize(aImg3);
 		$(this).find('img').attr('src',require('../imgs/s-copy.png'));
+		$(this).find('p').addClass('active');
 		$.ajax({
 			url:apiUrl+'/customization/price?style='+sessionStorage.getItem("style")+'&material='+sessionStorage.getItem("material")+'&size='+sSize,
 			success:function(data){
@@ -89,6 +92,7 @@ import apiUrl from '../js/config';
 		sessionStorage.setItem("size",sSize);
 		changeSize(aImg3);
 		$(this).find('img').attr('src',require('../imgs/m-copy.png'));
+		$(this).find('p').addClass('active');
 		$.ajax({
 			url:apiUrl+'/customization/price?style='+sessionStorage.getItem("style")+'&material='+sessionStorage.getItem("material")+'&size='+sSize,
 			success:function(data){
@@ -108,6 +112,7 @@ import apiUrl from '../js/config';
 		sessionStorage.setItem("size",sSize);
 		changeSize(aImg3);
 		$(this).find('img').attr('src',require('../imgs/l-copy.png'));
+		$(this).find('p').addClass('active');
 		$.ajax({
 			url:apiUrl+'/customization/price?style='+sessionStorage.getItem("style")+'&material='+sessionStorage.getItem("material")+'&size='+sSize,
 			success:function(data){
@@ -274,10 +279,12 @@ import apiUrl from '../js/config';
 					var val=$(this).html();
 					switch($(btn).attr('data-type')){
 						case 'necklace':
+							changeStyle(aImg1);
 							oText.html('项链('+val+')');
 							sessionStorage.setItem("style",$(item).get(0).dataset.code);
-							changeStyle(aImg1);
 							$(aImg1).eq(0).attr('src',require('../imgs/necklace-copy.png'));
+							$(aImg1).eq(0).next('p').addClass('active');
+							$(aImg1).eq(0).next('p').removeClass('lace');
 							$.ajax({
 								url:apiUrl+'/customization/price?style='+$(item).get(0).dataset.code+'&material='+sessionStorage.getItem("material")+'&size='+sessionStorage.getItem("size"),
 								success:function(data){
@@ -293,10 +300,11 @@ import apiUrl from '../js/config';
 							});
 						break;
 						case 'earring':
+							changeStyle(aImg1);
 							oText.html(val);
 							sessionStorage.setItem("style",$(item).get(0).dataset.code);
-							changeStyle(aImg1);
 							$(aImg1).eq(2).attr('src',require('../imgs/earring-copy.png'));
+							$(aImg1).eq(2).next('p').addClass('active');
 							$.ajax({
 								url:apiUrl+'/customization/price?style='+$(item).get(0).dataset.code+'&material='+sessionStorage.getItem("material")+'&size='+sessionStorage.getItem("size"),
 								success:function(data){
@@ -312,10 +320,11 @@ import apiUrl from '../js/config';
 							});
 						break;
 						case 'block':
+							changeMaterial(aImg2);
 							oText.html('18k金('+val+')');
 							sessionStorage.setItem("material",$(item).get(0).dataset.code);
-							changeMaterial(aImg2);
 							$(aImg2).eq(1).attr('src',require('../imgs/block-copy.png'));
+							$(aImg2).eq(1).next('p').addClass('active');
 							$.ajax({
 								url:apiUrl+'/customization/price?style='+sessionStorage.getItem("style")+'&material='+$(item).get(0).dataset.code+'&size='+sessionStorage.getItem("size"),
 								success:function(data){
@@ -341,15 +350,34 @@ function changeStyle(aObj){
 	aObj[0].src=require('../imgs/necklace.png');
 	aObj[1].src=require('../imgs/brooch.png');
 	aObj[2].src=require('../imgs/earring.png');
+	aObj.forEach(function(item,index){
+		$(item).next('p').removeClass('active');
+		if(index==0){
+			$(item).next('p').html('项链');
+			$(item).next('p').addClass('lace');
+		}
+		if(index==2){
+			$(item).next('p').html('耳饰');
+		}
+	});
 }
 function changeMaterial(aObj){
 	aObj[0].src=require('../imgs/block.png');
 	aObj[1].src=require('../imgs/block.png');
+	aObj.forEach(function(item,index){
+		$(item).next('p').removeClass('active');
+		if(index==1){
+			$(item).next('p').html('18k金');
+		}
+	});
 }
 function changeSize(aObj){
 	aObj[0].src=require('../imgs/s.png');
 	aObj[1].src=require('../imgs/m.png');
 	aObj[2].src=require('../imgs/l.png');
+	aObj.forEach(function(item,index){
+		$(item).next('p').removeClass('active');
+	});
 }
 
 //提交定制

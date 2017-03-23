@@ -68,25 +68,25 @@ import apiUrl from '../js/config';
 	var oBtn=$('.pay>button');
 
 	oBtn.on('click',function(){
-		$.ajax({
-			type:'post',
-			url:'http://192.168.30.45:8081/customization/order/pay',
-			data:{
-				orderNo:'1234567'
-			},
-			success:function(data){
-				if(data.head.code){
-					console.log('数据返回错误！');
-					return;
-				}
-				var form=data.body.form;
-				$('body').append(form);
-				console.log('data:',data);
-			},
-			error:function(err){
-				console.log(err);
-			}
-		});
+		// $.ajax({
+		// 	type:'post',
+		// 	url:apiUrl+'/customization/order/pay',
+		// 	data:{
+		// 		orderNo:'1234567'
+		// 	},
+		// 	success:function(data){
+		// 		if(data.head.code){
+		// 			console.log('数据返回错误！');
+		// 			return;
+		// 		}
+		// 		var form=data.body.form;
+		// 		$('body').append(form);
+		// 		console.log('data:',data);
+		// 	},
+		// 	error:function(err){
+		// 		console.log(err);
+		// 	}
+		// });
 	});
 
 })();

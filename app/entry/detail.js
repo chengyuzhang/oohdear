@@ -11,7 +11,7 @@ var ID=localStorage.getItem("deciveID");
 var temp=window.location.search;
 var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
 
-//
+//故事详情
 (function(){
 	var oPic=$('.detail>img');
 	var oWrap=$('.detail-con');
@@ -22,7 +22,7 @@ var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
 	var oSign=$('em.kind');
 
 	$.ajax({
-		url:'http://192.168.30.234:8082/article/58',
+		url:'http://192.168.30.234:8082/article/59',
 		success:function(data){
 			console.log(data);
 			var con=data.body.content;
@@ -125,12 +125,6 @@ var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
 				}
 			});
 		},1000);
-
-
-
-		
-
-		
 	});
 })();
 
@@ -165,6 +159,7 @@ var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
 	var oOk=$('.ok');
 	var oBg=$('.words-box-bg');
 
+	//收藏与否
 	oCollect.on('click',function(){
 		var vipNo=sessionStorage.getItem("vipNo");
 		if(parseInt(vipNo)){
@@ -187,6 +182,7 @@ var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
 		}
 	});
 
+	//点击留言按钮
 	oWord.on('click',function(){
 		var vipNo=sessionStorage.getItem("vipNo");
 		if(parseInt(vipNo)){
@@ -201,6 +197,7 @@ var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
 		}
 	});
 
+	//取消留言框
 	oCancel.on('click',function(){
 		$(oBg).css('opacity',0);
 		setTimeout(function(){
@@ -209,6 +206,7 @@ var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
 		},500);
 	});
 
+	//发送留言
 	oOk.on('click',function(){
 		var val=$(oBg).find('textarea').val();
 		var vipNo=sessionStorage.getItem("vipNo");
@@ -239,6 +237,18 @@ var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
 				console.log(err);
 			}
 		});
+	});
+})();
+
+//关闭注册层
+(function(){
+	var oX=$('.opacity>header a');
+	oX.on('click',function(){
+		oP.css('opacity',0);
+		setTimeout(function(){
+			oP.css('display','none');
+		},500);
+		return false;
 	});
 })();
 
