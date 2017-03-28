@@ -55,6 +55,9 @@ input,textarea{
 	background: none;
 	resize: none;
 }
+img{
+	vertical-align: bottom;
+}
 .clear{
 	zoom:1;
 }

@@ -14,7 +14,7 @@ import apiUrl from '../js/config';
 
 	$.ajax({
 		url:apiUrl+'/member?memberNo='+vipNo,
-		success:function(data){
+		success:function(data){console.log(data);
 			if(data.head.code){
 				console.log('数据返回错误！');
 				return;

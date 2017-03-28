@@ -88,6 +88,12 @@ import apiUrl from '../js/config';
 		var aCity=$('.city li');
 		aCity.forEach(function(item,index){
 			$(item).on('click',function(){console.log($(this).text());
+
+				aCity.forEach(function(item1,index1){
+					$(item1).removeClass('active');
+				});
+				$(this).addClass('active');
+				
 				oInput.val(valProv+'/'+$(this).text());
 			});
 		});
@@ -154,6 +160,7 @@ import apiUrl from '../js/config';
 				},
 				success:function(data){
 					alert('添加成功！');
+					window.location.href='manage-address.html';
 				},
 				error:function(err){
 					alert('添加失败！');

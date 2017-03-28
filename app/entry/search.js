@@ -35,7 +35,9 @@ import apiUrl from '../js/config';
 
 			arr.forEach(function(item,index){
 				str+='<li id='+item.id+' class="item"><section class="block">';
-                str+='<img class="show-pic" src="'+item.cover+'" alt=""><h2 class="title">'+item.title+'</h2>';
+                //str+='<img class="show-pic" src="'+item.cover+'" alt=""><h2 class="title">'+item.title+'</h2>';
+                str+='<a href="detail.html?id='+item.id+'"><img class="show-pic" src="'+item.cover+'" ></a>';
+                str+='<h2 class="title">'+item.title+'</h2>';
                 str+='<div class="item-foot"><span class="time">'+item.publishTime+'</span><em class="kind">'+item.labels+'</em>';
                 str+='</div></section></li>';
 			});
@@ -57,7 +59,7 @@ import apiUrl from '../js/config';
 	
 	if(parseInt(vipNo)){//登录
 		//添加搜索记录
-
+		oInput.focus();
 		$(document).on('keydown',function(ev){
 			var code=ev.keyCode;
 			if(code==13){//回车时取值
@@ -109,6 +111,7 @@ import apiUrl from '../js/config';
 				if($('.history ul>li').length>2){
 					oUl.height('.72rem');
 					$('.show-all').css('display','block');
+					$('.clear-record').css('display','none');
 				}
 
 				//展开全部
@@ -116,6 +119,7 @@ import apiUrl from '../js/config';
 					var h=$('.history ul>li').length*$('.history ul>li').eq(0).height();
 					$(this).css('display','none');
 					oUl.css('height',h);
+					$('.clear-record').css('display','block');
 					setTimeout(function(){
 						oUl.css('height','auto');
 					},300);
@@ -173,15 +177,13 @@ import apiUrl from '../js/config';
 				$('.show-all').css('display','none');
 			}
 		});
-
-
 	}else{//未登录
 		var aSearchRecord;
 		oInput.focus();
 		showRecord();
 
 		oInput.on('focus',function(){
-			$(this).val('');
+			
 			aSearchRecord=JSON.parse(localStorage.getItem('searchRecord'));//获取搜索记录
 			showRecord();
 		});
@@ -226,6 +228,7 @@ import apiUrl from '../js/config';
 			if($('.history ul>li').length>2){
 				oUl.height('.72rem');
 				$('.show-all').css('display','block');
+				$('.clear-record').css('display','none');
 			}
 			del();
 		}
@@ -266,6 +269,7 @@ import apiUrl from '../js/config';
 			var h=$('.history ul>li').length*$('.history ul>li').eq(0).height();
 			$(this).css('display','none');
 			oUl.css('height',h);
+			$('.clear-record').css('display','block');
 			setTimeout(function(){
 				oUl.css('height','auto');
 			},300);

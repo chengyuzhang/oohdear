@@ -22,17 +22,23 @@ var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
 	var oSign=$('em.kind');
 
 	$.ajax({
-		url:'http://192.168.30.234:8082/article/59',
-		success:function(data){
-			console.log(data);
+		url:apiUrl+'/article/'+valObject.id,
+		success:function(data){console.log(data);
 			var con=data.body.content;
-			$(oPic).attr('src',con.picture);
+			if(con.picture){
+				$(oPic).attr('src',con.picture);
+			}
+			
 			$(oImg).attr('src',con.avatar);
 			$(oName).html(con.nickName);
 			$(oT).html(con.articleName);
 			$(oTime).html(con.created);
 			$(oSign).html(con.articleLabel);
 			$(oWrap).html(con.articleInfo);
+			$(oWrap).find('img').attr({
+				'width':'auto',
+				'height':'auto'
+			});
 		},
 		error:function(err){
 			console.log(err);
@@ -66,15 +72,17 @@ var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
 			});
 
 			oWrap.html(str);
+			if(data.body.end){
+				$('.comments>button').css('display','none');
+			}
 		},
 		error:function(err){
 			console.log(err);
 		}
 	});
 	oBtn.on('click',function(){
-
 		clearTimeout(timer);
-
+		str='';
 		$(oRe).html('正在加载中...');
 		$(oRe).css('bottom','.5rem');
 		timer=setTimeout(function(){
@@ -83,17 +91,18 @@ var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
 			pageNum++;
 			$.ajax({
 				url:apiUrl+'/message/query?memberNo='+vipNo+'&articleId='+valObject.id+'&pageNum='+pageNum+'&pageSize='+pageSize,
-				success:function(data){
+				success:function(data){console.log('begin:',data);
 					arr=data.body.messageList;
-					if(!arr){return;}
+					if(arr.length==0){return;}
 					if(!data.body.end){
+						console.log('arr:',arr);
 						arr.forEach(function(item,index){
 							str+='<li id='+item.id+'><div class="top">';
 			                str+='<img src="'+item.avatar+'" alt=""><span>'+item.nickname+'</span><i>'+item.createTime+'</i>';
 			                str+='</div><p>'+item.content+'</p></li>';
 						});
-
-						oWrap.html(str);
+						
+						oWrap.append(str);
 						$(oRe).html('本次加载完成！');
 						timer2=setTimeout(function(){
 							$(oRe).css('bottom','.1rem');
@@ -107,7 +116,7 @@ var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
 				                str+='</div><p>'+item.content+'</p></li>';
 							});
 
-							oWrap.html(str);
+							oWrap.append(str);
 						}
 						iBtnNum++;
 						iNum=pageNum-1;
@@ -137,8 +146,8 @@ var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
 		url:apiUrl+'/article/count?articleId='+valObject.id+'&memberNo='+vipNo,
 		success:function(data){
 			var body=data.body;
-			oWordCount.html(body.collectionCount);
-			oCollectCount.html(body.messageCount);
+			oWordCount.html(body.messageCount);
+			oCollectCount.html(body.collectionCount);
 			if(!body.isRecord){
 				$(oCollect).css('background','url('+require('../imgs/heart.png')+') 0 0/contain no-repeat');
 			}else{
@@ -155,6 +164,8 @@ var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
 (function(){
 	var oWord=$('.bottom>.l>li:first-of-type>i');
 	var oCollect=$('.bottom>.l>li:last-of-type>i');
+	var oCollectCount=$('.bottom>.l>li:first-of-type>span');//留言数容器
+	var oWordCount=$('.bottom>.l>li:last-of-type>span');//点赞数容器
 	var oCancel=$('.cancel');
 	var oOk=$('.ok');
 	var oBg=$('.words-box-bg');
@@ -164,7 +175,7 @@ var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
 		var vipNo=sessionStorage.getItem("vipNo");
 		if(parseInt(vipNo)){
 			$.ajax({
-				url:apiUrl+'/collection/add?memberNo='+vipNo+'&articleId='+30,
+				url:apiUrl+'/collection/add?memberNo='+vipNo+'&articleId='+valObject.id,
 				success:function(data){
 					var body=data.body;
 					if(!body.isRecord){
@@ -172,7 +183,8 @@ var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
 					}else{
 						$(oCollect).css('background','url('+require('../imgs/heart-copy.png')+') 0 0/contain no-repeat');
 					}
-				},
+					$(oWordCount).text(body.signCount);
+				},		
 				error:function(err){
 					console.log(err);
 				}
@@ -187,7 +199,7 @@ var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
 		var vipNo=sessionStorage.getItem("vipNo");
 		if(parseInt(vipNo)){
 			$(oBg).css('display','block');
-
+			$(oBg).find('textarea').val('');
 			setTimeout(function(){
 				$(oBg).css('opacity',1);
 				$(oBg).find('textarea').get(0).focus();
@@ -210,7 +222,6 @@ var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
 	oOk.on('click',function(){
 		var val=$(oBg).find('textarea').val();
 		var vipNo=sessionStorage.getItem("vipNo");
-		console.log('xxx:',vipNo);
 		$.ajax({
 			type:'post',
 			url:apiUrl+'/message/add',
@@ -220,12 +231,32 @@ var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
 				content:val
 			},
 			success:function(data){
-				console.log(data);
 				if(data.head.code){
 					console.log('数据返回错误！');
 					return;
 				}
 				if(data.body.addStatus){
+					var oWrap=$('.list');
+					var str='';
+					$.ajax({
+						url:apiUrl+'/message/query?memberNo='+vipNo+'&articleId='+valObject.id+'&pageNum='+1+'&pageSize='+5,
+						success:function(data){console.log('end:',data);
+							var arr=data.body.messageList;
+							if(!arr){return;}
+							arr.forEach(function(item,index){
+								str+='<li id='+item.id+'><div class="top">';
+				                str+='<img src="'+item.avatar+'" alt=""><span>'+item.nickname+'</span><i>'+item.createTime+'</i>';
+				                str+='</div><p>'+item.content+'</p></li>';
+							});
+
+							oWrap.html(str);
+						},
+						error:function(err){
+							console.log(err);
+						}
+					});
+
+					$(oCollectCount).text(data.body.messageCount);
 					$(oBg).css('opacity',0);
 					setTimeout(function(){
 						$(oBg).css('display','none');
@@ -242,6 +273,7 @@ var valObject=url2json(decodeURI(decodeURI(temp)).split('?')[1]);
 
 //关闭注册层
 (function(){
+	var oP=$('.opacity');
 	var oX=$('.opacity>header a');
 	oX.on('click',function(){
 		oP.css('opacity',0);
@@ -313,7 +345,6 @@ function login(){
 			var iCode=$('.code').val();
 			var oP=$('.opacity');
 			var iBtn=false;//控制刚登录时头像显示开关
-			console.log(iSign,':',iCode,':',iTel);
 
 			if(iTel==''||iCode==''){
 				alert('手机号或验证码不能为空！');
@@ -328,7 +359,6 @@ function login(){
 						random:ID
 					},
 					success:function(data){
-						console.log('data:',data);
 						if(data.head.code){
 							alert(data.head.message);
 							$(oImg).get(0).src=apiUrl+'/pic?t='+Date.now()+'&random='+ID;

@@ -34,7 +34,10 @@ import apiUrl from '../js/config';
                 
                 str+='<div class="delete"><i></i><span>删除</span></div>';
                 str+='<div class="edit" data-zone="'+item.zone+'" data-address="'+item.detail+'"><i></i><span>编辑</span></div>';
-                str+='</div><a href="order.html?vipId='+item.id+'"></a></li>';
+                if(sessionStorage.getItem("step")=="true"){
+                	str+='</div><a href="order.html?vipId='+item.id+'"></a></li>';
+                }
+                str+='</div><a href="#"></a></li>';
 	    	});
 	    	oList.html(str);
 
@@ -44,7 +47,9 @@ import apiUrl from '../js/config';
 				var aDefault=$('.list>li .default');
 				var aEdit=$('.list>li .edit');
 				var aDel=$('.list>li .delete');
-
+				var oWrap=$('.opacity');
+				var oBtn=$('.opacity .con li:last-of-type');
+				var oCancel=$('.opacity .con li:first-of-type');
 				//设置默认地址
 				aDefault.forEach(function(item,index){
 					$(item).on('click',function(){
@@ -72,20 +77,52 @@ import apiUrl from '../js/config';
 				//删除
 				aDel.forEach(function(item,index){
 					$(item).on('click',function(){
-						$.ajax({
-							url:apiUrl+'/address/'+aItem[index].id+'/delete',
-							success:function(data){
-								var data=data;
-								if(data){
-									$(item).parent().parent().remove();
-								}
-							},
-							error:function(err){
-								console.log(err);
-							}
-						});
+
+						alertC(index);
+
+						
 					});
 				});
+
+
+				//窗口的确认
+				oBtn.on('click',function(){
+					$.ajax({
+						url:apiUrl+'/address/'+aItem[$(oBtn).get(0).dataset.index].id+'/delete',
+						success:function(data){
+							
+							if(data){
+								cancel();
+								aItem[$(oBtn).get(0).dataset.index].remove();
+							}
+						},
+						error:function(err){
+							console.log(err);
+						}
+					});
+				});
+
+				//点击取消窗口消失
+				oCancel.on('click',function(){
+					cancel();
+				});
+
+				//弹出窗口函数
+				function alertC(index){
+					oBtn.attr('data-index',index);
+					oWrap.css('display','block');
+					setTimeout(function(){
+						oWrap.css('opacity',1);
+					},50);
+				}
+
+				//窗口消失函数
+				function cancel(){
+					oWrap.css('opacity',0);
+					setTimeout(function(){
+						oWrap.css('display','none');
+					},500);
+				}
 			})();
 
 			//编辑地址跳转

@@ -2,6 +2,176 @@ import '../css/index.css';
 import $ from 'n-zepto';
 import apiUrl from '../js/config';
 import md5 from 'md5';
+// import './story';
+// import './fashion';
+// import './baby';
+
+//首页标签
+(function(){
+	var oWrap=document.querySelector('#wrap');
+	var sLabel='';
+	$.ajax({
+		url:apiUrl+'/article/label',
+		success:function(data){
+			var aLabel=data.body.labels;
+			aLabel.forEach(function(item,index){
+				if(index==0){
+					sLabel+='<div id="'+item.id+'" class="swiper-slide other" data-kind="story">'+item.labelContent+'</div>';
+				}else if(index==1){
+					sLabel+='<div id="'+item.id+'" class="swiper-slide other" data-kind="fashion">'+item.labelContent+'</div>';
+				}else if(index==2){
+					sLabel+='<div id="'+item.id+'" class="swiper-slide other" data-kind="baby">'+item.labelContent+'</div>';
+				}
+				
+			});
+			$(oWrap).append(sLabel);
+
+			//点击标签返回不同数据
+			(function(){
+				var aBtn=$('.other');
+				aBtn.forEach(function(item,index){
+					var pageNum=1;//第几页
+					var pageSize=5;//每页几条
+					var str='';
+					$(item).on('click',function(){
+						var ID=$(item).get(0).id;
+						var kind=$(item).get(0).dataset.kind;
+						$.ajax({
+							url:apiUrl+'/article/list/label?pageNum='+pageNum+'&pageSize='+pageSize+'&labelId='+ID,
+							success:function(data){
+								var arrShow=data.body.articles;
+								init(str,'.'+kind,arrShow);
+							},
+							error:function(err){
+								console.log(err);
+							}
+						});
+						load(str,pageNum,pageSize,'.'+kind,ID);
+					});
+				});
+			})();
+
+		},
+		error:function(err){
+			console.log(err);
+		}
+	});
+
+
+		function init(str,obj,arrShow){
+			var oUl=$(obj).find('ul');
+			//首页商品展示前3条
+			arrShow.forEach(function(item,index){
+				str+='<li class="item"><section class="block">';
+				str+='<div class="item-head"><img class="avater" src="'+item.avatar+'" ><span class="name">'+item.nickName+'</span><i class="time">'+item.publishTime+'</i></div>';
+				str+='<a href="detail.html?id='+item.id+'"><img class="show-pic" src="'+item.cover+'" ></a>';
+				str+='<h2 class="title">'+item.title+'</h2>';
+				str+='<p class="text">'+item.content+'</p>';
+				str+='<div class="item-foot"><span class="words">留言 '+item.messageNum+'</span><i></i><span class="good">点赞 '+item.interestedNum+'</span>';
+				if(item.labels){
+					item.labels.split(',').forEach(function(item1,index1){
+						str+='<em class="kind">'+item1+'</em>';
+					});
+				}
+				str+='</div></section></li>';
+			});
+			oUl.html(str);
+		}
+
+		function refresh(str,obj,arrShow){
+			var oUl=$(obj).find('ul');
+			//首页商品展示前3条
+			arrShow.forEach(function(item,index){
+				str+='<li class="item"><section class="block">';
+				str+='<div class="item-head"><img class="avater" src="'+item.avatar+'" ><span class="name">'+item.nickName+'</span><i class="time">'+item.publishTime+'</i></div>';
+				str+='<a href="detail.html?id='+item.id+'"><img class="show-pic" src="'+item.cover+'" ></a>';
+				str+='<h2 class="title">'+item.title+'</h2>';
+				str+='<p class="text">'+item.content+'</p>';
+				str+='<div class="item-foot"><span class="words">留言 '+item.messageNum+'</span><i></i><span class="good">点赞 '+item.interestedNum+'</span>';
+				
+				if(item.labels){
+					item.labels.split(',').forEach(function(item1,index1){
+						str+='<em class="kind">'+item1+'</em>';
+					});
+				}
+				str+='</div></section></li>';
+			});
+			
+			oUl.append(str);
+		}
+
+		//上拉加载
+		function load(str,pageNum,pageSize,obj,id){
+			var oUl=$(obj).find('ul');
+			var oWrap=$(obj);//获取滚动元素
+			var oRe=$('.refresh');
+			var iHScreen=window.screen.availHeight;//获取屏幕高度
+
+			var iNum=0;//记录第一次到最后一条数据时的页数
+			var iBtnNum=0;
+			var timer=null;
+			var timer1=null;
+			var timer2=null;
+			var startY=0;
+			var moveY=0;
+
+			//判断上滑
+			oWrap.on('touchstart',function(ev){
+				startY=ev.changedTouches[0].pageY;
+			});
+			oWrap.on('touchmove',function(ev){
+				moveY=ev.changedTouches[0].pageY;
+				//document.title=startY-moveY;
+			});
+
+			oWrap.on('scroll',function(){
+				var oLi=$(obj+' li:nth-last-of-type(1)');//获取最后一个内容块
+				var t=oLi.offset().top;//最后一个内容块距离页面最顶部的距离
+
+				if((startY-moveY)>=0&&t<iHScreen+100){
+					clearTimeout(timer);
+					timer=setTimeout(function(){
+						pageNum++;
+						clearTimeout(timer2);
+						$(oRe).html('正在加载中...');
+						$(oRe).css('bottom',0);
+						$.ajax({
+							url:apiUrl+'/article/list/label?pageNum='+pageNum+'&pageSize='+pageSize+'&labelId='+id,
+							success:function(data){
+								if(data.head.code){
+									console.log('数据返回错误！');
+									return;
+								}
+								if(!data.body.end){
+									refresh(str,obj,data.body.articles);
+									$(oRe).html('本次加载完成！');
+									timer2=setTimeout(function(){
+										$(oRe).css('bottom','-1rem');
+									},2000);
+									iBtnNum=0;
+								}else{
+									if(!iBtnNum){
+										refresh(str,obj,data.body.articles);
+									}
+									iBtnNum++;
+									iNum=pageNum-1;
+									pageNum=iNum;
+									$(oRe).html('已经到末尾咯~');
+									$(oRe).css('bottom',0);
+									clearTimeout(timer1);
+									timer1=setTimeout(function(){
+										$(oRe).css('bottom','-1rem');
+									},2000);
+								}
+							}
+						});
+					},1000);
+				}
+
+			});
+		}
+})();
+
 
 //页面首次打开的唯一标识
 (function(){
@@ -33,7 +203,6 @@ import md5 from 'md5';
 		});
 	}
 
-	console.log('ID:',ID);
 })();
 
 //跳转到搜索页面
@@ -51,7 +220,7 @@ import md5 from 'md5';
 	var str='';
 
 	$.ajax({
-		url:apiUrl+'/article/list?pageNum='+pageNum+'&pageSize='+pageSize+'',
+		url:apiUrl+'/article/list?pageNum='+pageNum+'&pageSize='+pageSize+'&labelId=0',
 		success:function(data){
 			if(data.head.code){
 				console.log('数据返回错误！');
@@ -268,7 +437,7 @@ import md5 from 'md5';
 					$(oRe).html('正在加载中...');
 					$(oRe).css('bottom',0);
 					$.ajax({
-						url:apiUrl+'/article/list?pageNum='+pageNum+'&pageSize='+pageSize+'',
+						url:apiUrl+'/article/list?pageNum='+pageNum+'&pageSize='+pageSize+'&labelId=0',
 						success:function(data){
 							if(data.head.code){
 								console.log('数据返回错误！');
@@ -283,7 +452,7 @@ import md5 from 'md5';
 								iBtnNum=0;
 							}else{
 								if(!iBtnNum){
-									refresh(data.body.articles);console.log(111);
+									refresh(data.body.articles);
 								}
 								iBtnNum++;
 								iNum=pageNum-1;

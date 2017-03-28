@@ -117,6 +117,22 @@ var reg = /^((1[0-9]{1})+\d{9})$/;
 			}
 		},1000);
 		iBtn=false;
+
+		$.ajax({
+			type:'post',
+			url:apiUrl+'/user/captcha',
+			data:{
+				mobile:val
+			},
+			success:function(data){
+				if(data.body.status){
+					alert('发送成功！');
+				}
+			},
+			error:function(err){
+				console.log(err);
+			}
+		});
 	});
 })();
 

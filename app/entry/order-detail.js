@@ -19,11 +19,12 @@ import apiUrl from '../js/config';
 	var expressNum=$('.express-num');
 	var expressCon=$('.express-step ul');
 	var str='';
-
+	var temp=window.location.search;
+	var valObject=url2json(temp.split('?')[1]);
 	var vipNo=sessionStorage.getItem("vipNo");
 
 	$.ajax({
-		url:apiUrl+'/customization/order/detail?memberNo='+vipNo+'&orderNo=345333',
+		url:apiUrl+'/customization/order/detail?memberNo='+vipNo+'&orderNo='+valObject.orderNo,
 		success:function(data){console.log(data);
 			var order=data.body.order;
 			var address1=data.body.address;
@@ -61,3 +62,12 @@ import apiUrl from '../js/config';
 		}
 	});
 })();
+function url2json(str){
+	var json={};
+	var arr=str.split('&');
+	for(var i=0; i<arr.length; i++){
+		var arr2=arr[i].split('=');
+		json[arr2[0]]=arr2[1];
+	}
+	return json;
+};
